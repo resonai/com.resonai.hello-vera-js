@@ -1,0 +1,6 @@
+{
+  "vite.https": true,
+  "vite.port": 8084,
+  "vite.browserType": "system",
+  "vite.showTerminal": true
+}
