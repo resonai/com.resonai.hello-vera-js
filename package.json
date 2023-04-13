@@ -10,7 +10,7 @@
     "deploy":"vite build && git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
-    "@resonai/vera-sdk": "^0.0.5"
+    "@resonai/vera-sdk": "^0.0.9"
   },
   "devDependencies": {
     "vite": "^4.1.0",

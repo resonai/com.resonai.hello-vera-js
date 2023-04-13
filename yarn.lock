@@ -112,10 +112,10 @@
   resolved "https://registry.yarnpkg.com/@esbuild/win32-x64/-/win32-x64-0.16.17.tgz#c5a1a4bfe1b57f0c3e61b29883525c6da3e5c091"
   integrity sha512-y+EHuSchhL7FjHgvQL/0fnnFmO4T1bhvWANX6gcnqTjtnKWbTvUMCpGnv2+t+31d7RzyEAYAd4u2fnIhHL6N/Q==
 
-"@resonai/vera-sdk@^0.0.5":
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/@resonai/vera-sdk/-/vera-sdk-0.0.5.tgz#699b3a7591b0619c84067fcdb0bd8290ed69c45f"
-  integrity sha512-KKyy1yn1o2mRQ3a7ftrXhED5Xuav+16eTbSNscLwBl/an86re7Iz/h7vNNG66jZCV7066pPR2sZEHP/R2uCG0Q==
+"@resonai/vera-sdk@^0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@resonai/vera-sdk/-/vera-sdk-0.0.9.tgz#6fda95c0ee2a7b9aca7b64defd2f6e061a871273"
+  integrity sha512-enxdxe8xXek9HTxq60nCp3m+m0R3JF8ITwsd6am2Ixm6YjvQFf1ohpzNHvntd3nnnpn2O+D6kM44YcY5bVb9Ig==
   dependencies:
     lodash "4.17.21"
 
