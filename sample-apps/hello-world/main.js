@@ -121,16 +121,24 @@ function appendChildElement(parent, confKey, title, onclick) {
   parent.appendChild(input)
 }
 
-function onModelUrlChange({ parent, property, value }) {
+async function onModelUrlChange({ parent, property, value }) {
   console.log('onModelUrlChange', value)
-  jseApiHelper.setPropertyInAppConfig ({ parent, property, value })
+  const result = await jseApiHelper.setPropertyInAppConfig ({ parent, property, value })
+  if (!result) {
+    console.error('onModelUrlChange setPropertyInAppConfig failed')
+    return
+  }
   meshObj.gltf = value
   jseApiHelper.mesh(meshObj)
 }
 
-function onScaleChange({ parent, property, value }) {
+async function onScaleChange({ parent, property, value }) {
   console.log('onScaleChange', value)
-  jseApiHelper.setPropertyInAppConfig ({ parent, property, value })
+  const result = await jseApiHelper.setPropertyInAppConfig ({ parent, property, value })
+  if (!result) {
+    console.error('onScaleChange setPropertyInAppConfig failed')
+    return
+  }
   meshObj.scale = new Array(3).fill(value ?? 1)
   jseApiHelper.mesh(meshObj)
 }
