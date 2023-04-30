@@ -3,25 +3,22 @@ import { jseApiHelper } from '@resonai/vera-sdk'
 const sceneID = 'iotScene'
 let appConfig = undefined
 let meshObj = undefined
-let url = undefined
-let authorization = undefined
+let serverUrl = undefined
 
 async function init() {
   jseApiHelper.loaded()
   appConfig = await jseApiHelper.getAppConfig()
-  url = appConfig.Provider.Url // https://lightswitch.free.beeceptor.com
-  authorization = appConfig.Provider.Authorization
-  const appConfigDevices = appConfig.Devices
-  if (!appConfigDevices) {
+  serverUrl = appConfig['Server Url'] || 'https://lightswitch.free.beeceptor.com'
+  const lightsStates = await getLightsFromIotServer()
+  if (!lightsStates) {
     return
   }
-  const devicesStates = await getDevicesFromIotServer()
   
   await jseApiHelper.initScene({ sceneID })
-  appConfigDevices.forEach(async deviceInfo => {
-    const id = deviceInfo.ID
-    const isOn = devicesStates[id]
-    const place = deviceInfo.Device
+  appConfig.Lights.forEach(async light => {
+    const id = light.ID
+    const isOn = lightsStates[id]
+    const place = light.Place
     const scale = [1, 1, 1]
     const gltf = getGltfPath({ isOn })
     const position = await jseApiHelper.getSOCenter({ key: place.key })
@@ -43,46 +40,55 @@ async function init() {
 }
 init()
 
-async function getDevicesFromIotServer () {
-  try {
-    const response = await fetch(`${url}/api/devices`, {
-      method: 'get',
-      headers: {
-        authorization: authorization
-      }
-    })
-    const deviceStateList = await response.json()
-    return Object.fromEntries(deviceStateList.map(device => [device.id, device.isOn]));
-  } catch (e) {
-    console.error('getDevices: error', e)
+async function getLightsFromIotServer () {
+  const lightsStateList = await safeFetchJson(`${serverUrl}/api/devices`, 'get')
+  if (!lightsStateList) {
+    return
   }
+  return Object.fromEntries(lightsStateList.map(light => [light.id, light.isOn]));
 }
 
 async function switchLight ({ id, isOn }) {
-  try {
-    const response = await fetch(`${url}/api/devices/${id}/action/turn${isOn ? 'Off' : 'On'}`, {
-      method: 'post',
-      headers: {
-        authorization: authorization
-      }
-    })
-    const deviceState = await response.json()
-    isOn = deviceState.isOn
-    const gltf = getGltfPath({ isOn })
-    meshObj = {
-      sceneID,
-      id,
-      gltf,
-      onEvent: ({ id, event }) => {
-        if (event == 'mouseUp') {
-          switchLight({ id, isOn })
-        }
-      }
-   }
-    jseApiHelper.mesh(meshObj)
-  } catch (e) {
-    console.error('switchLight: error', e)
+  // This is where the toggle happens; the server is expected to return the new state.
+  const light = await safeFetchJson(`${serverUrl}/api/devices/${id}/action/turn${isOn ? 'Off' : 'On'}`, 'post')
+  if (!light) {
+    return
   }
+  isOn = light.isOn
+  const gltf = getGltfPath({ isOn })
+  meshObj = {
+    sceneID,
+    id,
+    gltf,
+    onEvent: ({ id, event }) => {
+      if (event === 'mouseUp') {
+        switchLight({ id, isOn })
+      }
+    }
+  }
+  jseApiHelper.mesh(meshObj)
+}
+
+async function safeFetchJson(url, method) {
+  try {
+    const response = await fetch(url, {
+      method
+      // ,headers: {
+      //   Add your authorization headers here
+      // }
+    })
+    if (response?.ok) {
+      return response.json()
+    }
+    if (response?.status === 429 && serverUrl.includes('free.beeceptor.com')) {
+      console.error('fetch error. You\'ve reached the daily free quota.')
+    } else {
+      console.error('fetch failed', response?.statusText)
+    }
+  } catch (e) {
+    console.error('fetch error', e)
+  }
+  return undefined
 }
 
 function getGltfPath ({ isOn }) {
