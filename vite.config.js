@@ -9,7 +9,6 @@ export default defineConfig({
         communication: resolve(__dirname, 'sample-apps/communication/index.html'),
         helloWorld: resolve(__dirname, 'sample-apps/hello-world/index.html'),
         messaging: resolve(__dirname, 'sample-apps/messaging/index.html'),
-        navigation: resolve(__dirname, 'sample-apps/navigation/index.html'),
         iot: resolve(__dirname, 'sample-apps/iot/index.html')
       },
     },

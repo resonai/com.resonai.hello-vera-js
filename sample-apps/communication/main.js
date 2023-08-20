@@ -2,22 +2,25 @@ import { veraApi } from '@resonai/vera-sdk'
 
 const navigationPackageName = 'com.resonai.navigation'
 const communicationSamplePackageName = 'com.resonai.sdk.sample.communication'
-const communicationButtonName = 'Start Communication'
+const communicationButtonName = 'Communication Demo'
 let pointOfInterest = undefined
 
-async function init() {
-  veraApi.registerButtons({ buttons: [{
-    name: communicationButtonName, isRegistered: true }] })
+async function init () {
+  veraApi.registerButtons({
+    buttons: [{
+      name: communicationButtonName, isRegistered: true
+    }]
+  })
 
   veraApi.onMessage(async (data) => {
-    console.log(communicationSamplePackageName, 'onMessage', data)
+    console.log(`${communicationSamplePackageName} got 'onMessage' event with: ${data}`)
     if (data.action === 'navigationSuccess') {
       // Briefly show the navigation success message
       const msgElement = document.getElementById('dest-reached')
       msgElement.style.display = "block"
       setTimeout(function() {
         msgElement.style.display = "none"
-      }, 3000)
+      }, 5000)
     }
     veraApi.tryOpen({ activityId: 'start' })
   })
@@ -25,29 +28,20 @@ async function init() {
 
   const appConfig = await veraApi.getAppConfig()
   pointOfInterest = appConfig['POI']
+  if (pointOfInterest === undefined) {
+    document.getElementById('navigate-message-button').disabled = true
+  }
   document.getElementById('navigate-message-button').addEventListener('click', onNavigateUsingMessageClick)
 }
 init()
 
-function onNavigateUsingMessageClick() {
-  if (!isValidSemanticObjectKeys()) {
-    return
-  }
+function onNavigateUsingMessageClick () {
   const data = {
     msg: 'navigateTo',
     poi: pointOfInterest.key,
     register: true,
     packageName: communicationSamplePackageName,
-    actions: {'navigationSuccess': true}
+    actions: { 'navigationSuccess': true }
   }
   veraApi.sendArmeMessage({ packageName: navigationPackageName, data })
-}
-
-function isValidSemanticObjectKeys() {
-  // TODO(orenco): add notification on the main page
-  if (pointOfInterest === undefined) {
-    console.error('Please configure "POI" and refresh')
-    return false
-  }
-  return true
 }
