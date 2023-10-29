@@ -10,6 +10,7 @@
     "deploy": "vite build && git push origin --delete gh-pages && git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
+    "//@resonai/vera-sdk": "^0.0.11",
     "@resonai/vera-sdk": "file:../resonai2/irocket/client/web/verasdk/"
   },
   "devDependencies": {
