@@ -27,7 +27,13 @@ async function init () {
     veraApi.tryOpen({ activityId: 'start' })
   })
   veraApi.loaded()
-  veraApi.onCameraPose(() => {})
+  let frame = 0
+  veraApi.onCameraPose(() => {
+    frame += 1
+    if (frame % 300 === 0) {
+      console.log('Camera position: ', veraApi.getCameraPose().translation)
+    }
+  })
 
   appConfig = await veraApi.getAppConfig()
   pointOfInterest = appConfig['POI']
@@ -54,31 +60,32 @@ function onNavigateUsingMessageClick () {
 async function onNearestPoiClick() {
   const MAX_DISTANCE_V = 2
   const MAX_DISTANCE_H = 3
-  var cameraPose = veraApi.getCameraPose()
+  let cameraCoords = veraApi.getCameraPose().translation
   const filter = {
     bool: {
       filter: [{
         range: {
           "ar:geometry.center_y": {
-            gte: cameraPose.translation[1] - MAX_DISTANCE_V,
-            lte: cameraPose.translation[1] + MAX_DISTANCE_V
+            gte: cameraCoords[1] - MAX_DISTANCE_V,
+            lte: cameraCoords[1] + MAX_DISTANCE_V
           }
         }
       }]
     }
   }
   // Geo-filter array: camX, camZ, max 2D horizontal distance (m)
-  const geofilter = [cameraPose.translation[0], cameraPose.translation[2], MAX_DISTANCE_H]
+  // TODO(orenco): simplify API structure
+  const geofilter = [cameraCoords[0], cameraCoords[2], MAX_DISTANCE_H]
   const allNearbyPois = await veraApi.querySemanticObjects({confKey: appConfig._id, filter, geofilter})
 
   let nearestPoiName = 'None'
   if (Object.values(allNearbyPois).length > 0) {
     // Get 3D distances to camera pos of all result POIs
     const allPoiDistances = Object.values(allNearbyPois).map(poi => {
-      const camPos = cameraPose.translation
       const poiPos = poi['ar:geometry']
-      if (!poiPos) return 9999
-      return Math.sqrt((poiPos['center_x'] - camPos[0]) ** 2 + (poiPos['center_y'] - camPos[1]) ** 2 + (poiPos['center_z'] - camPos[2]) ** 2)
+      // Exclude Pois with no position
+      if (!poiPos) return Infinity
+      return Math.hypot(poiPos['center_x'] - cameraCoords[0], poiPos['center_y'] - cameraCoords[1], poiPos['center_z'] - cameraCoords[2])
     })
     // Find the index & name of the nearest value
     const minIndex = allPoiDistances.reduce((minIndex, currentValue, currentIndex, arr) => {
