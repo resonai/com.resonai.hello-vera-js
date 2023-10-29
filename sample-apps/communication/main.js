@@ -3,8 +3,8 @@ import { veraApi } from '@resonai/vera-sdk'
 const navigationPackageName = 'com.resonai.navigation'
 const communicationSamplePackageName = 'com.resonai.sdk.sample.communication'
 const communicationButtonName = 'Communication Demo'
-let appConfig = undefined
-let pointOfInterest = undefined
+let appConfig
+let pointOfInterest
 
 async function init () {
   veraApi.registerButtons({
@@ -18,9 +18,9 @@ async function init () {
     if (data.action === 'navigationSuccess') {
       // Briefly show the navigation success message
       const msgElement = document.getElementById('dest-reached')
-      msgElement.style.display = "block"
-      setTimeout(function() {
-        msgElement.style.display = "none"
+      msgElement.style.display = 'block'
+      setTimeout(function () {
+        msgElement.style.display = 'none'
       }, 5000)
     }
     // TODO(orenco): promise syntax
@@ -30,7 +30,7 @@ async function init () {
   veraApi.onCameraPose(() => {})
 
   appConfig = await veraApi.getAppConfig()
-  pointOfInterest = appConfig['POI']
+  pointOfInterest = appConfig.POI
   if (pointOfInterest === undefined) {
     document.getElementById('navigate-message-button').disabled = true
     document.getElementById('nearest-poi-button').disabled = true
@@ -46,20 +46,20 @@ function onNavigateUsingMessageClick () {
     poi: pointOfInterest.key,
     register: true,
     packageName: communicationSamplePackageName,
-    actions: { 'navigationSuccess': true }
+    actions: { navigationSuccess: true }
   }
   veraApi.sendArmeMessage({ packageName: navigationPackageName, data })
 }
 
-async function onNearestPoiClick() {
+async function onNearestPoiClick () {
   const MAX_DISTANCE_V = 2
   const MAX_DISTANCE_H = 3
-  var cameraPose = veraApi.getCameraPose()
+  const cameraPose = veraApi.getCameraPose()
   const filter = {
     bool: {
       filter: [{
         range: {
-          "ar:geometry.center_y": {
+          'ar:geometry.center_y': {
             gte: cameraPose.translation[1] - MAX_DISTANCE_V,
             lte: cameraPose.translation[1] + MAX_DISTANCE_V
           }
@@ -69,7 +69,7 @@ async function onNearestPoiClick() {
   }
   // Geo-filter array: camX, camZ, max 2D horizontal distance (m)
   const geofilter = [cameraPose.translation[0], cameraPose.translation[2], MAX_DISTANCE_H]
-  const allNearbyPois = await veraApi.querySemanticObjects({confKey: appConfig._id, filter, geofilter})
+  const allNearbyPois = await veraApi.querySemanticObjects({ confKey: appConfig._id, filter, geofilter })
 
   let nearestPoiName = 'None'
   if (Object.values(allNearbyPois).length > 0) {
@@ -77,24 +77,24 @@ async function onNearestPoiClick() {
     const allPoiDistances = Object.values(allNearbyPois).map(poi => {
       const camPos = cameraPose.translation
       const poiPos = poi['ar:geometry']
-      if (!poiPos) return 9999
-      return Math.sqrt((poiPos['center_x'] - camPos[0]) ** 2 + (poiPos['center_y'] - camPos[1]) ** 2 + (poiPos['center_z'] - camPos[2]) ** 2)
+      if (!poiPos) { return 9999 }
+      return Math.sqrt((poiPos.center_x - camPos[0]) ** 2 + (poiPos.center_y - camPos[1]) ** 2 + (poiPos.center_z - camPos[2]) ** 2)
     })
     // Find the index & name of the nearest value
     const minIndex = allPoiDistances.reduce((minIndex, currentValue, currentIndex, arr) => {
-      return currentValue < arr[minIndex] ? currentIndex : minIndex;
-    }, 0);
+      return currentValue < arr[minIndex] ? currentIndex : minIndex
+    }, 0)
     const nearestPoi = Object.values(allNearbyPois)[minIndex]
     nearestPoiName = nearestPoi.name
   }
 
   // Briefly show the nearest POI name
-  let nearestPoiElement = document.getElementById("nearest-poi-name")
+  const nearestPoiElement = document.getElementById('nearest-poi-name')
   nearestPoiElement.textContent = nearestPoiName
   const msgElement = document.getElementById('nearest-poi-found')
-  msgElement.style.display = "block"
+  msgElement.style.display = 'block'
   setTimeout(function () {
-    nearestPoiElement.textContent = ""
-    msgElement.style.display = "none"
+    nearestPoiElement.textContent = ''
+    msgElement.style.display = 'none'
   }, 5000)
 }
