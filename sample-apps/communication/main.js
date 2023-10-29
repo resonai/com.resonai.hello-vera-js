@@ -73,9 +73,7 @@ async function onNearestPoiClick () {
       }]
     }
   }
-  // Geo-filter array: camX, camZ, max 2D horizontal distance (m)
-  // TODO(orenco): simplify API structure
-  const geofilter = [cameraCoords[0], cameraCoords[2], MAX_DISTANCE_H]
+  const geofilter = { camX: cameraCoords[0], camZ: cameraCoords[2], hDistance: MAX_DISTANCE_H }
   const allNearbyPois = await veraApi.querySemanticObjects({ confKey: appConfig._id, filter, geofilter })
 
   let nearestPoiName = 'None'
