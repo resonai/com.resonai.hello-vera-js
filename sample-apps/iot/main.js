@@ -1,11 +1,11 @@
 import { jseApiHelper } from '@resonai/vera-sdk'
 
 const sceneID = 'iotScene'
-let appConfig
-let meshObj
-let serverUrl
+let appConfig = undefined
+let meshObj = undefined
+let serverUrl = undefined
 
-async function init () {
+async function init() {
   jseApiHelper.loaded()
   appConfig = await jseApiHelper.getAppConfig()
   serverUrl = appConfig['Server Url'] || 'https://lightswitch.free.beeceptor.com'
@@ -13,7 +13,7 @@ async function init () {
   if (!lightsStates) {
     return
   }
-
+  
   await jseApiHelper.initScene({ sceneID })
   appConfig.Lights.forEach(async light => {
     const id = light.ID
@@ -29,13 +29,14 @@ async function init () {
       scale,
       gltf,
       onEvent: ({ id, event }) => {
-        if (event === 'mouseUp') {
+        if (event == 'mouseUp') {
           switchLight({ id, isOn })
         }
       }
     }
     jseApiHelper.mesh(meshObj)
   })
+
 }
 init()
 
@@ -44,7 +45,7 @@ async function getLightsFromIotServer () {
   if (!lightsStateList) {
     return
   }
-  return Object.fromEntries(lightsStateList.map(light => [light.id, light.isOn]))
+  return Object.fromEntries(lightsStateList.map(light => [light.id, light.isOn]));
 }
 
 async function switchLight ({ id, isOn }) {
@@ -68,7 +69,7 @@ async function switchLight ({ id, isOn }) {
   jseApiHelper.mesh(meshObj)
 }
 
-async function safeFetchJson (url, method) {
+async function safeFetchJson(url, method) {
   try {
     const response = await fetch(url, {
       method

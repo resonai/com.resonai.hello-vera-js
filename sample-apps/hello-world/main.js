@@ -1,12 +1,12 @@
 import './style.css'
 import { jseApiHelper } from '@resonai/vera-sdk'
 
-let isControlView
-let appConfig
-let meshObj
+let isControlView = undefined
+let appConfig = undefined
+let meshObj = undefined
 let isModalActive = false
 
-async function init () {
+async function init() {
   jseApiHelper.callArmeActivity(({ activityId }) => {
     console.log('hello-vera-js callArmeActivity', activityId)
   })
@@ -16,9 +16,9 @@ async function init () {
   })
   jseApiHelper.loaded()
   appConfig = await jseApiHelper.getAppConfig() // this is done too early. When loaded through link - appConfig is not ready.
-  isControlView = (new URL(document.location)).searchParams.has('controlview') // As defined in Developer console under Web application link
+  isControlView = (new URL(document.location)).searchParams.has("controlview") // As defined in Developer console under Web application link
   if (isControlView) {
-    console.log('Control View App')
+    console.log("Control View App")
     createConfigurationSection(appConfig)
     document.getElementById('close-modal').addEventListener('click', closeModal)
   } else {
@@ -49,7 +49,7 @@ async function init () {
     scale,
     gltf,
     onEvent: ({ id, event }) => {
-      if (event === 'mouseUp') {
+      if (event == 'mouseUp') {
         openModal()
       }
     }
@@ -63,22 +63,22 @@ async function init () {
 }
 init()
 
-function openModal () {
+function openModal() {
   console.log('openModal')
-  if (isModalActive) { return }
+  if (isModalActive) return
   jseApiHelper.tryOpen({ activityId: 'SOME ACTIVITY ID' }) // opening an activity would cause the HTML to show
   document.getElementById('modal').style.display = 'block'
   isModalActive = true
 }
-function closeModal () {
+function closeModal() {
   console.log('closeModal')
-  if (!isModalActive) { return }
+  if (!isModalActive) return
   jseApiHelper.tryClose()
   document.getElementById('modal').style.display = 'none'
   isModalActive = false
 }
 
-async function createConfigurationSection () {
+async function createConfigurationSection() {
   const toolsElement = document.getElementById('tools')
   const modelUrlElement = await createConfigElement('Model URL', 'text', onModelUrlChange)
   const scaleElement = await createConfigElement('Scale', 'number', onScaleChange)
@@ -88,7 +88,7 @@ async function createConfigurationSection () {
   appendChildElement(toolsElement, undefined, 'abort', abort)
 }
 
-async function createConfigElement (confKey, type, onchange, onclick, readonly) {
+async function createConfigElement(confKey, type, onchange, onclick, readonly) {
   const div = document.createElement('div')
   div.append(`${confKey}:`)
   const input = document.createElement('input')
@@ -96,34 +96,34 @@ async function createConfigElement (confKey, type, onchange, onclick, readonly) 
     input.setAttribute('type', type)
   }
   if (readonly) {
-    input.setAttribute('readonly', '')
+    input.setAttribute('readonly' ,'')
   }
   let value = appConfig[confKey]
-  if (typeof value === 'object' && value !== null) {
+  if(typeof value === "object" && value !== null) {
     value = await getName(value.key)
   }
   input.setAttribute('value', value)
   if (onclick) {
-    input.addEventListener('click', (event) => onclick({ parent: appConfig, property: confKey, value: event.target.value }))
+    input.addEventListener("click", (event) => onclick({parent: appConfig, property: confKey, value: event.target.value}))
   }
   if (onchange) {
-    input.addEventListener('change', (event) => onchange({ parent: appConfig, property: confKey, value: event.target.value }))
+    input.addEventListener("change", (event) => onchange({parent: appConfig, property: confKey, value: event.target.value}))
   }
   div.appendChild(input)
   return div
 }
 
-function appendChildElement (parent, confKey, title, onclick) {
+function appendChildElement(parent, confKey, title, onclick) {
   const input = document.createElement('input')
   input.setAttribute('type', 'button')
   input.setAttribute('value', title)
-  input.addEventListener('click', (event) => onclick({ parent: appConfig, property: confKey, value: event.target.value }))
+  input.addEventListener('click', (event) => onclick({parent: appConfig, property: confKey, value: event.target.value}))
   parent.appendChild(input)
 }
 
-async function onModelUrlChange ({ parent, property, value }) {
+async function onModelUrlChange({ parent, property, value }) {
   console.log('onModelUrlChange', value)
-  const result = await jseApiHelper.setPropertyInAppConfig({ parent, property, value })
+  const result = await jseApiHelper.setPropertyInAppConfig ({ parent, property, value })
   if (!result) {
     console.error('onModelUrlChange setPropertyInAppConfig failed')
     return
@@ -132,9 +132,9 @@ async function onModelUrlChange ({ parent, property, value }) {
   jseApiHelper.mesh(meshObj)
 }
 
-async function onScaleChange ({ parent, property, value }) {
+async function onScaleChange({ parent, property, value }) {
   console.log('onScaleChange', value)
-  const result = await jseApiHelper.setPropertyInAppConfig({ parent, property, value })
+  const result = await jseApiHelper.setPropertyInAppConfig ({ parent, property, value })
   if (!result) {
     console.error('onScaleChange setPropertyInAppConfig failed')
     return
@@ -143,30 +143,30 @@ async function onScaleChange ({ parent, property, value }) {
   jseApiHelper.mesh(meshObj)
 }
 
-function editPlace ({ parent, property, value }) {
+function editPlace({ parent, property, value }) {
   console.log('editPlace', value)
   jseApiHelper.editSO({ key: parent[property]?.key, parent, property, id: parent[property]?.id })
 }
 
-function goToPlace ({ parent, property, value }) {
+function goToPlace({ parent, property, value }) {
   const key = parent[property]?.key
   console.log('goToPlace', key, value)
   if (!key) {
     return
   }
-  jseApiHelper.activeSO({}) // so that's we'll re-focus, even if this is alreayd the current active SO.
-  jseApiHelper.activeSO({ key })
+  jseApiHelper.activeSO ({}) // so that's we'll re-focus, even if this is alreayd the current active SO.
+  jseApiHelper.activeSO ({ key })
 }
 
-function abort () {
+function abort() {
   if (meshObj) {
     jseApiHelper.destroyMesh(meshObj)
   }
-  jseApiHelper.activeSO({})
-  jseApiHelper.abort()
+  jseApiHelper.activeSO ({})
+  jseApiHelper.abort ()
 }
 
-async function getName (semanticObjectKey) {
+async function getName(semanticObjectKey) {
   const semanticObjectsDict = await jseApiHelper.querySemanticObjects({
     confKey: appConfig._id,
     fields: ['id,type,name,key,argeometry{center_x,center_y,center_z}']
@@ -175,6 +175,7 @@ async function getName (semanticObjectKey) {
   const name = semanticObject.name
   return name
 }
+
 
 // function listenToCameraPose() {
 //   jseApiHelper.onCameraPose((cameraPose) => {
