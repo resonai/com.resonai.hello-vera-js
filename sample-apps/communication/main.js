@@ -73,7 +73,7 @@ async function onNearestPoiClick () {
       }]
     }
   }
-  const geofilter = { camX: cameraCoords[0], camZ: cameraCoords[2], hDistance: MAX_DISTANCE_H }
+  const geofilter = { centerX: cameraCoords[0], centerZ: cameraCoords[2], hDistance: MAX_DISTANCE_H }
   const allNearbyPois = await veraApi.querySemanticObjects({ confKey: appConfig._id, filter, geofilter })
 
   let nearestPoiName = 'None'
