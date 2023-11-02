@@ -19,7 +19,7 @@ async function init () {
       // Briefly show the navigation success message
       const msgElement = document.getElementById('dest-reached')
       msgElement.style.display = 'block'
-      setTimeout(function () {
+      setTimeout(() => {
         msgElement.style.display = 'none'
       }, 5000)
     }
@@ -100,7 +100,7 @@ async function onNearestPoiClick () {
   nearestPoiElement.textContent = nearestPoiName
   const msgElement = document.getElementById('nearest-poi-found')
   msgElement.style.display = 'block'
-  setTimeout(function () {
+  setTimeout(() => {
     nearestPoiElement.textContent = ''
     msgElement.style.display = 'none'
   }, 5000)
