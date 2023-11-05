@@ -3,6 +3,8 @@ import { veraApi } from '@resonai/vera-sdk'
 const navigationPackageName = 'com.resonai.navigation'
 const communicationSamplePackageName = 'com.resonai.sdk.sample.communication'
 const communicationButtonName = 'Communication Demo'
+const titleEn = 'Sample Communication App'
+const titleRu = 'Пример коммуникационного приложения'
 let pointOfInterest = undefined
 
 async function init () {
@@ -25,6 +27,13 @@ async function init () {
     veraApi.tryOpen({ activityId: 'start' })
   })
   veraApi.loaded()
+
+  const titleElement = document.getElementById("app-title")
+  titleElement.textContent = titleEn
+  // Calls to veraApi.on...() must take place *after* veraApi.loaded()
+  veraApi.onLanguage((newLanguage) => {
+    titleElement.textContent = (newLanguage.lan === 'ru') ? titleRu : titleEn
+  })
 
   const appConfig = await veraApi.getAppConfig()
   pointOfInterest = appConfig['POI']
