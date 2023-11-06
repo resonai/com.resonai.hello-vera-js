@@ -7,6 +7,8 @@ let appConfig
 let pointOfInterest
 
 async function init () {
+  appConfig = await veraApi.getAppConfig()
+
   veraApi.registerButtons({
     buttons: [{
       name: communicationButtonName, isRegistered: true
@@ -23,19 +25,18 @@ async function init () {
         msgElement.style.display = 'none'
       }, 5000)
     }
-    // TODO(orenco): promise syntax
+    // TODO(orenco): use promise syntax, to first make sure tryOpen finished successfully
     veraApi.tryOpen({ activityId: 'start' })
   })
   veraApi.loaded()
   let frame = 0
   veraApi.onCameraPose(() => {
-    frame += 1
+    frame++
     if (frame % 300 === 0) {
       console.log('Camera position: ', veraApi.getCameraPose().translation)
     }
   })
 
-  appConfig = await veraApi.getAppConfig()
   pointOfInterest = appConfig.POI
   if (pointOfInterest === undefined) {
     document.getElementById('navigate-message-button').disabled = true
@@ -74,12 +75,13 @@ async function onNearestPoiClick () {
     }
   }
   const geofilter = { centerX: cameraCoords[0], centerZ: cameraCoords[2], hDistance: MAX_DISTANCE_H }
-  const allNearbyPois = await veraApi.querySemanticObjects({ confKey: appConfig._id, filter, geofilter })
+  const allNearbyPoisObjs = await veraApi.querySemanticObjects({ confKey: appConfig._id, filter, geofilter })
+  const allNearbyPois = Object.values(allNearbyPoisObjs)
 
   let nearestPoiName = 'None'
-  if (Object.values(allNearbyPois).length > 0) {
+  if (allNearbyPois.length > 0) {
     // Get 3D distances to camera pos of all result POIs
-    const allPoiDistances = Object.values(allNearbyPois).map(poi => {
+    const allPoiDistances = allNearbyPois.map(poi => {
       const poiPos = poi['ar:geometry']
       // Exclude Pois with no position
       if (!poiPos) { return Infinity }
@@ -89,7 +91,7 @@ async function onNearestPoiClick () {
     const minIndex = allPoiDistances.reduce((minIndex, currentValue, currentIndex, arr) => {
       return currentValue < arr[minIndex] ? currentIndex : minIndex
     }, 0)
-    const nearestPoi = Object.values(allNearbyPois)[minIndex]
+    const nearestPoi = allNearbyPois[minIndex]
     nearestPoiName = nearestPoi.name
   }
 
