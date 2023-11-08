@@ -14,6 +14,18 @@ async function init () {
     }]
   })
 
+  // Add handling of Back event - should take place *before* veraApi.loaded()
+  veraApi.onBackEvent(() => {
+      // Briefly show the back event message
+      // TODO(orenco): merge all messages into a single block
+      const msgElement = document.getElementById('back-clicked')
+      msgElement.style.display = "block"
+      setTimeout(function() {
+        msgElement.style.display = "none"
+      }, 5000)
+  })
+
+  // Add handling of messages - should take place *before* veraApi.loaded()
   veraApi.onMessage(async (data) => {
     console.log(`${communicationSamplePackageName} got 'onMessage' event with: ${data}`)
     if (data.action === 'navigationSuccess') {
@@ -28,9 +40,9 @@ async function init () {
   })
   veraApi.loaded()
 
+  // Handle language change - must take place *after* veraApi.loaded()
   const titleElement = document.getElementById("app-title")
   titleElement.textContent = titleEn
-  // Calls to veraApi.on...() must take place *after* veraApi.loaded()
   veraApi.onLanguage((newLanguage) => {
     titleElement.textContent = (newLanguage.lan === 'ru') ? titleRu : titleEn
   })
