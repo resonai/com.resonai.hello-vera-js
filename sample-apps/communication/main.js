@@ -53,6 +53,7 @@ async function init () {
     document.getElementById('navigate-message-button').disabled = true
   }
   document.getElementById('navigate-message-button').addEventListener('click', onNavigateUsingMessageClick)
+  document.getElementById('native-message-button').addEventListener('click', onNativeMessageClick)
 }
 init()
 
@@ -65,4 +66,13 @@ function onNavigateUsingMessageClick () {
     actions: { 'navigationSuccess': true }
   }
   veraApi.sendArmeMessage({ packageName: navigationPackageName, data })
+}
+
+function onNativeMessageClick () {
+  // This triggers native's 'sendNative' bridge API (with sender = the ARX, and data = the JSON sent)
+  veraApi.sendNativeMessage({
+    data: {
+      test: 123
+    }
+  })
 }
