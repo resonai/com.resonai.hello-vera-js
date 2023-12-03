@@ -2,5 +2,8 @@
   "vite.https": true,
   "vite.port": 8084,
   "vite.browserType": "system",
-  "vite.showTerminal": true
+  "vite.showTerminal": true,
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": true},
+  "eslint.alwaysShowStatus": true,
+  "eslint.validate": ["javascript"]
 }
