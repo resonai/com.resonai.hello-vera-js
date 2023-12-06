@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello World JSE / Communication Intent</title>
+  <script type="module" crossorigin src="../../assets/communication-410aaff2.js"></script>
+  <link rel="modulepreload" crossorigin href="../../assets/jseApiHelper-9f2fb730.js">
+</head>
+<body>
+  <div id="app">
+    <div id="communication">
+      <p id="app-title" style="background-color: orange;"></p>
+      <p id="dest-reached" style="background-color: darkgreen; display: none">
+        You've reached your destination!
+      </p>
+      <p id="back-clicked" style="background-color: darkgreen; display: none">
+        Back event caught!
+      </p>
+      <p id="nearest-poi-found" style="background-color: darkgreen; display: none">
+        Nearest POI is: <div id="nearest-poi-name"></div>
+      </p>
+      <input id="navigate-message-button" type="button" value="Navigate using Message"><br/>
+      <input id="native-message-button" type="button" value="Send Native Message"><br/>
+      <input id="nearest-poi-button" type="button" value="Find nearest POI"><br/>
+    </div>
+  </div>
+  
+</body>
+</html>
