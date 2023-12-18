@@ -75,7 +75,7 @@ async function init () {
 }
 init()
 
-function onNavigateUsingMessageClick (skipPreview) {
+function onNavigateUsingMessageClick ({ skipPreview = false }) {
   const data = {
     msg: 'navigateTo',
     poi: pointOfInterest.key,
