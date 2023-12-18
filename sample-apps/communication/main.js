@@ -65,17 +65,17 @@ async function init () {
     document.getElementById('nearest-poi-button').disabled = true
   }
   document.getElementById('navigate-message-preview-button').addEventListener('click', () => {
-    onNavigateUsingMessageClick(false)
+    onNavigateUsingMessageClick()
   })
   document.getElementById('navigate-message-nopreview-button').addEventListener('click', () => {
-    onNavigateUsingMessageClick(true)
+    onNavigateUsingMessageClick({ skipPreview: true })
   })
   document.getElementById('native-message-button').addEventListener('click', onNativeMessageClick)
   document.getElementById('nearest-poi-button').addEventListener('click', onNearestPoiClick)
 }
 init()
 
-function onNavigateUsingMessageClick ({ skipPreview = false }) {
+function onNavigateUsingMessageClick ({ skipPreview = false } = {}) {
   const data = {
     msg: 'navigateTo',
     poi: pointOfInterest.key,
