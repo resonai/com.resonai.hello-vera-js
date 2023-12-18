@@ -64,16 +64,22 @@ async function init () {
     document.getElementById('navigate-message-button').disabled = true
     document.getElementById('nearest-poi-button').disabled = true
   }
-  document.getElementById('navigate-message-button').addEventListener('click', onNavigateUsingMessageClick)
+  document.getElementById('navigate-message-preview-button').addEventListener('click', () => {
+    onNavigateUsingMessageClick(false)
+  })
+  document.getElementById('navigate-message-nopreview-button').addEventListener('click', () => {
+    onNavigateUsingMessageClick(true)
+  })
   document.getElementById('native-message-button').addEventListener('click', onNativeMessageClick)
   document.getElementById('nearest-poi-button').addEventListener('click', onNearestPoiClick)
 }
 init()
 
-function onNavigateUsingMessageClick () {
+function onNavigateUsingMessageClick (skipPreview) {
   const data = {
     msg: 'navigateTo',
     poi: pointOfInterest.key,
+    skipPreview,
     register: true,
     packageName: communicationSamplePackageName,
     actions: { navigationSuccess: true }
