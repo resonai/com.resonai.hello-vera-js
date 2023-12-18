@@ -62,7 +62,6 @@ async function init () {
   pointOfInterest = appConfig.POI
   if (pointOfInterest === undefined) {
     document.getElementById('navigate-message-button').disabled = true
-    document.getElementById('nearest-poi-button').disabled = true
   }
   document.getElementById('navigate-message-preview-button').addEventListener('click', () => {
     onNavigateUsingMessageClick()
