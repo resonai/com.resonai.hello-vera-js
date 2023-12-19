@@ -39,6 +39,7 @@ async function init () {
         msgElement.style.display = 'none'
       }, 5000)
     }
+    // Regardless of the type of message we receive - always start the package
     // TODO(orenco): use promise syntax, to first make sure tryOpen finished successfully
     veraApi.tryOpen({ activityId: 'start' })
   })
@@ -62,7 +63,6 @@ async function init () {
   pointOfInterest = appConfig.POI
   if (pointOfInterest === undefined) {
     document.getElementById('navigate-message-button').disabled = true
-    document.getElementById('nearest-poi-button').disabled = true
   }
   document.getElementById('navigate-message-preview-button').addEventListener('click', () => {
     onNavigateUsingMessageClick()
@@ -82,7 +82,7 @@ function onNavigateUsingMessageClick ({ skipPreview = false } = {}) {
     skipPreview,
     register: true,
     packageName: communicationSamplePackageName,
-    actions: { navigationSuccess: true }
+    actions: { navigationSuccess: true, navigationCancelled: true }
   }
   veraApi.sendArmeMessage({ packageName: navigationPackageName, data })
 }
