@@ -10,7 +10,7 @@
     "deploy": "vite build && git push origin --delete gh-pages && git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
-    "@resonai/vera-sdk": "^0.0.11"
+    "@resonai/vera-sdk": "^0.0.12"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.4.0",
