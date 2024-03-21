@@ -71,25 +71,22 @@ async function init () {
     onNavigateUsingMessageClick({ skipPreview: true })
   })
   document.getElementById('navigate-message-noaccessibility-button').addEventListener('click', () => {
-    onNavigateUsingMessageClick({ noaccessibility: true })
+    onNavigateUsingMessageClick({ noAccessibility: true })
   })
   document.getElementById('native-message-button').addEventListener('click', onNativeMessageClick)
   document.getElementById('nearest-poi-button').addEventListener('click', onNearestPoiClick)
 }
 init()
 
-function onNavigateUsingMessageClick ({ skipPreview = false, noaccessibility = false } = {}) {
+function onNavigateUsingMessageClick ({ skipPreview = false, noAccessibility = false } = {}) {
   const data = {
     msg: 'navigateTo',
     poi: pointOfInterest.key,
     skipPreview,
+    hideAccessibilityPicker: noAccessibility,
     register: true,
     packageName: communicationSamplePackageName,
     actions: { navigationSuccess: true, navigationCancelled: true }
-  }
-  if (noaccessibility) {
-    // To not show the accessibility options menu, send a preset option (e.g. 'all' for 'Fastest')
-    data.presetCapability = 'all'
   }
   veraApi.sendArmeMessage({ packageName: navigationPackageName, data })
 }
