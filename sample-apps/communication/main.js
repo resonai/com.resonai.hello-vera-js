@@ -73,17 +73,21 @@ async function init () {
   document.getElementById('navigate-message-noaccessibility-button').addEventListener('click', () => {
     onNavigateUsingMessageClick({ noAccessibility: true })
   })
+  document.getElementById('navigate-message-dest-only-button').addEventListener('click', () => {
+    onNavigateUsingMessageClick({ showDestinationOnly: true })
+  })
   document.getElementById('native-message-button').addEventListener('click', onNativeMessageClick)
   document.getElementById('nearest-poi-button').addEventListener('click', onNearestPoiClick)
 }
 init()
 
-function onNavigateUsingMessageClick ({ skipPreview = false, noAccessibility = false } = {}) {
+function onNavigateUsingMessageClick ({ skipPreview = false, noAccessibility = false, showDestinationOnly = false } = {}) {
   const data = {
     msg: 'navigateTo',
     poi: pointOfInterest.key,
     skipPreview,
     hideAccessibilityPicker: noAccessibility,
+    showDestinationOnly,
     register: true,
     packageName: communicationSamplePackageName,
     actions: { navigationSuccess: true, navigationCancelled: true }
