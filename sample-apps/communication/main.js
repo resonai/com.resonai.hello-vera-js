@@ -71,7 +71,7 @@ async function init () {
     onNavigateUsingMessageClick({ skipPreview: true })
   })
   document.getElementById('navigate-message-noaccessibility-button').addEventListener('click', () => {
-    onNavigateUsingMessageClick({ noaccessibility: true })
+    onNavigateUsingMessageClick({ noAccessibility: true })
   })
   document.getElementById('navigate-message-dest-only-button').addEventListener('click', () => {
     onNavigateUsingMessageClick({ showDestinationOnly: true })
@@ -81,19 +81,16 @@ async function init () {
 }
 init()
 
-function onNavigateUsingMessageClick ({ skipPreview = false, noaccessibility = false, showDestinationOnly = false } = {}) {
+function onNavigateUsingMessageClick ({ skipPreview = false, noAccessibility = false, showDestinationOnly = false } = {}) {
   const data = {
     msg: 'navigateTo',
     poi: pointOfInterest.key,
     skipPreview,
+    hideAccessibilityPicker: noAccessibility,
     showDestinationOnly,
     register: true,
     packageName: communicationSamplePackageName,
     actions: { navigationSuccess: true, navigationCancelled: true }
-  }
-  if (noaccessibility) {
-    // To not show the accessibility options menu, send a preset option (e.g. 'all' for 'Fastest')
-    data.presetCapability = 'all'
   }
   veraApi.sendArmeMessage({ packageName: navigationPackageName, data })
 }
