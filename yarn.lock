@@ -189,10 +189,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@resonai/vera-sdk@^0.0.12":
-  version "0.0.12"
-  resolved "https://registry.yarnpkg.com/@resonai/vera-sdk/-/vera-sdk-0.0.12.tgz#c390a221cf19593b868f7689d8d7a21c06fd4ebf"
-  integrity sha512-7xvuLef2cgpxcu7BQ1CRVtRPFTlrF9PMiR7jb+4lJNby4Tp49oPAIm5mGPZcOQHDrns2UQWYivKTPJ5Pu/hteg==
+"@resonai/vera-sdk@^0.0.13":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@resonai/vera-sdk/-/vera-sdk-0.0.13.tgz#88e55bf164984d4ba7d5e8018700ec0d756b45a3"
+  integrity sha512-v0MrqWcUXH4XCYBS8NeqiehN1do2Bu94JuV8beifcqp1uCdNi25koSrKBIw3ETzH3w60Aib2l3jP/wCyOE3/hA==
   dependencies:
     lodash "4.17.21"
 
