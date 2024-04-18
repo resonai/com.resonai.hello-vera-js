@@ -78,6 +78,9 @@ async function init () {
   })
   document.getElementById('native-message-button').addEventListener('click', onNativeMessageClick)
   document.getElementById('nearest-poi-button').addEventListener('click', onNearestPoiClick)
+  document.getElementById('take-photo').addEventListener('click', onTakePhotoClick)
+  document.getElementById('take-qr-Code').addEventListener('click', onTakeQrCodeClick)
+  document.getElementById('identify-user').addEventListener('click', onIdentifyUserClick)
 }
 init()
 
@@ -150,4 +153,24 @@ async function onNearestPoiClick () {
     nearestPoiElement.textContent = ''
     msgElement.style.display = 'none'
   }, 5000)
+}
+
+async function onTakePhotoClick () {
+  const result = await veraApi.takePhoto('Taking photo')
+  console.log('Result: ', result)
+}
+
+async function onTakeQrCodeClick () {
+  const result = await veraApi.takeQrCode('Taking QR code')
+  console.log('Result: ', result)
+}
+
+async function onIdentifyUserClick () {
+  let result
+  try {
+    result = await veraApi.identifyUser('title', 'subtitle', 'cancel button')
+  } catch (e) {
+    result = 'Cancelled'
+  }
+  console.log('Result: ', result)
 }
